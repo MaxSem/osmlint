@@ -32,17 +32,17 @@ class PgDumper {
 
     private function dumpTable( $pg, $file, $table ) {
         $id = 0;
-        $statement = pg_prepare( $pg, '', "SELECT osm_id, tags->'wikipedia' wikipedia, tags->'wikidata' wikidata"
+        $statement = pg_prepare( $pg, '', "SELECT osm_id, tags->'wikipedia' wikipedia, tags->'wikidata' wikidata "
             . "FROM planet_osm_$table "
-            . "WHERE tags ? 'wikipedia' AND tags ? 'wikidata' AND osm_id > $1 LIMIT $2"
+            . "WHERE ( tags ? 'wikipedia' OR tags ? 'wikidata' ) AND osm_id > $1 LIMIT $2"
         );
         do {
-            $result = pg_execute( $pg, $statement, [ $id, self::BATCH_SIZE ] );
+            $result = pg_execute( $pg, '', [ $id, self::BATCH_SIZE ] );
             while ( $row = pg_fetch_object( $result ) ) {
                 $id = $row->osm_id;
                 $row->type = $table;
                 $json = json_encode( $row, JSON_UNESCAPED_UNICODE );
-                fwrite( $file, "$json,\n" );
+                fwrite( $file, "$json\n" );
             }
         } while ( pg_num_rows( $result ) > 0 );
     }
