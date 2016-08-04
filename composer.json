@@ -1,0 +1,19 @@
+{
+    "name": "osmlint",
+    "description": "PHP Syntax Highlighter",
+    "license": "WTFPL",
+    "homepage": "https://github.com/MaxSem/osmlint",
+    "authors": [
+        {
+            "name": "Max Semenik"
+        }
+    ],
+    "require": {
+        "php": ">=5.5"
+    },
+    "support": {
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}
