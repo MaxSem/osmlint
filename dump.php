@@ -2,7 +2,7 @@
 
 require_once( 'vendor/autoload.php' );
 
-$settings = new OsmLint\DbSettings;
-$dumper = new OsmLint\PgDumper( $settings );
+$env = new OsmLint\Environment;
+$dumper = new OsmLint\PgDumper( $env );
 
 $dumper->dumpToFile( 'dump.txt' );

@@ -7,34 +7,34 @@ use PDO;
 class PgDumper {
     const BATCH_SIZE = 1000;
 
-    private $dbSettings;
+    private $environment;
 
-    public function __construct( DbSettings $settings ) {
-        $this->dbSettings = $settings;
+    public function __construct( Environment $env ) {
+        $this->environment = $env;
     }
 
     public function dumpToFile( $fileName ) {
         $file = fopen( $fileName, 'w' );
 
-        $connString = "host={$this->dbSettings->getPostgresHost()} "
-            . "dbname={$this->dbSettings->getPostgresDatabase()} "
-            . "user={$this->dbSettings->getPostgresUser()} "
-            . "password={$this->dbSettings->getPostgresPassword()} ";
+        $connString = "host={$this->environment['host']} "
+            . "dbname={$this->environment['database']} "
+            . "user={$this->environment['user']} "
+            . "password={$this->environment['password']}";
 
         $pg = pg_connect( $connString );
 
         $this->dumpTable( $pg, $file, 'point' );
-        $this->dumpTable( $pg, $file, 'line' );
-        $this->dumpTable( $pg, $file, 'polygon' );
+        //$this->dumpTable( $pg, $file, 'line' );
+        //$this->dumpTable( $pg, $file, 'polygon' );
 
         pg_close( $pg );
     }
 
     private function dumpTable( $pg, $file, $table ) {
-        $id = 0;
-        $statement = pg_prepare( $pg, '', "SELECT osm_id, tags->'wikipedia' wikipedia, tags->'wikidata' wikidata "
+        $id = -10000000000;
+        $statement = pg_prepare( $pg, '', "SELECT osm_id, name, tags->'wikipedia' wikipedia, tags->'wikidata' wikidata "
             . "FROM planet_osm_$table "
-            . "WHERE ( tags ? 'wikipedia' OR tags ? 'wikidata' ) AND osm_id > $1 LIMIT $2"
+            . "WHERE ( tags ? 'wikipedia' OR tags ? 'wikidata' ) AND osm_id > $1 ORDER BY osm_id LIMIT $2"
         );
         do {
             $result = pg_execute( $pg, '', [ $id, self::BATCH_SIZE ] );
