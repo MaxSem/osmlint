@@ -13,16 +13,16 @@ class CheckRunner {
         $lines = file( $fileName );
         //$line = array_slice( $lines, 0, 1000 );
 
-        $errors = [];
+        $errors = new ResultSet;
         foreach ( $lines as $line ) {
             $object = json_decode( $line );
             $result = $this->checker->check( $object );
 
-            foreach ( $result as $err ) {
-                $errors[$err][] = $object;
-            }
+            $errors->addMulti( $result );
         }
 
-        return $errors;
+        $errors->addMulti( $this->checker->finalizeChecks() );
+
+        return $errors->results;
     }
 }

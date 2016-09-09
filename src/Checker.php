@@ -3,10 +3,10 @@
 namespace OsmLint;
 
 class Checker {
-    private $environment, $pool;
+    private $environment, $existenceCheck;
 
     private static $checks = [
-        'checkWdFormat',
+        'checkWdLink',
         'checkWpLink',
         'checkWpWd',
     ];
@@ -15,9 +15,9 @@ class Checker {
         'be-tarask' => 'be-x-old',
     ];
 
-    public function __construct( Environment $env, ConnectionPool $pool ) {
+    public function __construct( Environment $env ) {
         $this->environment = $env;
-        $this->pool = $pool;
+        $this->existenceCheck = new WikidataExistenceChecker( $env );
     }
 
     public function check( $object ) {
@@ -32,12 +32,19 @@ class Checker {
         return $errors;
     }
 
-    private function checkWdFormat( $object ) {
+    public function finalizeChecks() {
+        $this->existenceCheck->flush();
+        return $this->existenceCheck->results;
+    }
+
+    private function checkWdLink( $object ) {
         if ( $object->wikidata !== null
             && !preg_match( '/^Q\d+$/', $object->wikidata )
         ) {
             return 'Invalid Wikidata entity ID';
         }
+
+        $this->existenceCheck->add( $object );
 
         return false;
     }
@@ -73,6 +80,7 @@ class Checker {
     }
 
     private function checkWpWd( $object ) {
+        return false; // @fixme:
         if ( $object->wikipedia && !$object->wikidata ) {
             return 'Object links to Wikipedia but not Wikidata';
         }
