@@ -25,7 +25,7 @@ class Checker {
         foreach ( self::$checks as $check ) {
             $result = $this->$check( $object );
             if ( $result ) {
-                $errors[] = $result;
+                $errors[$result][] = $object;
             }
         }
 
@@ -38,9 +38,10 @@ class Checker {
     }
 
     private function checkWdLink( $object ) {
-        if ( $object->wikidata !== null
-            && !preg_match( '/^Q\d+$/', $object->wikidata )
-        ) {
+        if ( $object->wikidata === null ) {
+            return false;
+        }
+        if ( !preg_match( '/^Q\d+$/', $object->wikidata ) {
             return 'Invalid Wikidata entity ID';
         }
 
