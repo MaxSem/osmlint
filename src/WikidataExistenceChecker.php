@@ -18,15 +18,15 @@ class WikidataExistenceChecker extends QueryAccumulator {
         }
 
         $db = $this->connect();
+        $s = implode( ', ', array_map( [ $db, 'quote' ], array_keys( $titles ) ) );
 
-        $query = $db->prepare( 'SELECT page_title, page_is_redirect
+        $sql = "SELECT page_title, page_is_redirect
 FROM page
 WHERE
     page_namespace=0
-    AND page_title IN (:titles)'
-        );
+    AND page_title IN ($s)";
 
-        $query->execute( ['titles' => array_keys( $titles )] );
+        $query = $db->query( $sql );
         foreach ( $query->fetchAll() as $row ) {
             $title = $row['page_title'];
             if ( $row['page_is_redirect'] ) {

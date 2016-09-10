@@ -2,7 +2,7 @@
 
 namespace OsmLint;
 
-class LintResults {
+class ResultSet {
     public $results = [];
 
     public function add( $category, $object ) {

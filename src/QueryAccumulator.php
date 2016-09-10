@@ -30,7 +30,7 @@ abstract class QueryAccumulator {
         }
     }
 
-    pritected function connect() {
+    protected function connect() {
         return Mysql::connect( $this->dbName, $this->environment );
     }
 
