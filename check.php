@@ -4,7 +4,7 @@ namespace OsmLint;
 
 require_once( __DIR__ . '/vendor/autoload.php' );
 
-ini_set( 'memory_limit', '512M' );
+ini_set( 'memory_limit', '1G' );
 
 $env = new Environment;
 $pool = new ConnectionPool( $env );
