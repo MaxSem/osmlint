@@ -124,7 +124,7 @@ HTML;
 		$link = htmlspecialchars( '?cat=' . urlencode( $sub ) );
 		$sub = htmlspecialchars( $sub );
 
-		echo "\t<div id=\"breadcrumbs\"><a href=\"?\">$main</a> » <a href=\"$link\">$sub</a></div>";
+		echo "\t<div id=\"breadcrumbs\"><a href=\".\">$main</a> » <a href=\"$link\">$sub</a></div>";
 	}
 
 	private function outputRawCategory( $name ) {
