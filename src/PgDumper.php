@@ -15,11 +15,12 @@ class PgDumper {
 
     public function dumpToFile( $fileName ) {
         $file = fopen( $fileName, 'w' );
+		$pg = $this->environment->getPostgresSettings();
 
-        $connString = "host={$this->environment['host']} "
-            . "dbname={$this->environment['database']} "
-            . "user={$this->environment['user']} "
-            . "password={$this->environment['password']}";
+        $connString = "host={$pg['host']} "
+            . "dbname={$pg['database']} "
+            . "user={$pg['user']} "
+            . "password={$pg['password']}";
 
         $pg = pg_connect( $connString );
 

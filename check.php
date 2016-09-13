@@ -2,7 +2,7 @@
 
 namespace OsmLint;
 
-require_once( 'vendor/autoload.php' );
+require_once( __DIR__ . '/vendor/autoload.php' );
 
 ini_set( 'memory_limit', '512M' );
 

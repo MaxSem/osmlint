@@ -23,6 +23,6 @@ class CheckRunner {
 
         $errors->addMulti( $this->checker->finalizeChecks() );
 
-        return $errors->results;
+        return $errors->getResults();
     }
 }
