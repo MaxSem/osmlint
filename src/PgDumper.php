@@ -26,7 +26,7 @@ class PgDumper {
 
         $this->dumpTable( $pg, $file, 'point' );
         //$this->dumpTable( $pg, $file, 'line' );
-        //$this->dumpTable( $pg, $file, 'polygon' );
+        $this->dumpTable( $pg, $file, 'polygon' );
 
         pg_close( $pg );
     }

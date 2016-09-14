@@ -74,13 +74,12 @@ HTML;
 		foreach ( $data as $object ) {
 			$object = (object)$object;
 
-			$type = htmlspecialchars( $object->type );
 			$osmLink = $this->osmLink( $object );
 			$name = htmlspecialchars( $object->name );
 			$wpLink = $this->wpLink( $object );
 			$wdLink = $this->wdLink( $object );
 
-			echo "<tr><td>$osmLink</td><td>$type</td><td>$name</td><td>$wpLink</td><td>$wdLink</td></tr>";
+			echo "<tr>$osmLink<td>$name</td><td>$wpLink</td><td>$wdLink</td></tr>";
 		}
 
 		echo "</table>\n";
@@ -89,15 +88,22 @@ HTML;
 	}
 
 	private function osmLink( $object ) {
+		$id = $object->osm_id;
 		switch ( $object->type ) {
 			case 'point':
 				$ot = 'node';
 				break;
+			case 'line':
+			case 'polygon':
+				$ot = $id > 0 ? 'way' : 'relation';
+				$id = abs( $id );
+				break;
 			default:
-				return $object->osm_id;
+				return "<tr>$id</tr><tr>???</tr>";
 		}
 
-		return "<a href=\"https://www.openstreetmap.org/edit?{$ot}={$object->osm_id}\">{$object->osm_id}</a>";
+		return "<td><a href=\"https://www.openstreetmap.org/edit?{$ot}={$id}\">{$id}</a></td>"
+			. "<td>$ot</td>";
 	}
 
 	private function wpLink( $object ) {
