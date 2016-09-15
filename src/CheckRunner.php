@@ -10,19 +10,14 @@ class CheckRunner {
     }
 
     public function checkDump( $fileName ) {
-        $lines = file( $fileName );
-        //$line = array_slice( $lines, 0, 1000 );
+        $file = fopen( $fileName, 'r' );
 
-        $errors = new ResultSet;
-        foreach ( $lines as $line ) {
+        while ( ( $line = fgets( $file ) ) !== false ) {
             $object = json_decode( $line );
-            $result = $this->checker->check( $object );
-
-            $errors->addMulti( $result );
+            $this->checker->check( $object );
         }
+        fclose( $file );
 
-        $errors->addMulti( $this->checker->finalizeChecks() );
-
-        return $errors->getResults();
+        $this->checker->finalizeChecks();
     }
 }

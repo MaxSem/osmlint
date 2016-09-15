@@ -16,7 +16,7 @@ class UI {
 	public function __construct( array $request, Environment $environment ) {
 		$this->request = $request;
 		$this->environment = $environment;
-		$this->checker = new Checker( $environment );
+		$this->checker = new Checker( $environment, new ResultSet() );
 		$this->dataFile = __DIR__ . '/../../problems.json';
 	}
 

@@ -3,7 +3,14 @@
 namespace OsmLint;
 
 class Checker {
-    private $environment, $existenceCheck;
+	/** @var Environment */
+    private $environment;
+	/** @var WikidataExistenceChecker */
+	private $wikidataCheck;
+	/** @var ExistenceHolder */
+	private $wikipediaCheck;
+	/** @var ResultSet */
+	private $resultSet;
 
     private static $checks = [
         'checkWikidataLink',
@@ -15,26 +22,25 @@ class Checker {
         'be-tarask' => 'be-x-old',
     ];
 
-    public function __construct( Environment $env ) {
+    public function __construct( Environment $env, ResultSet $resultSet ) {
         $this->environment = $env;
-        $this->existenceCheck = new WikidataExistenceChecker( $env );
+        $this->wikidataCheck = new WikidataExistenceChecker( $env, $resultSet );
+		$this->wikipediaCheck = new ExistenceHolder( $env, $resultSet );
+		$this->resultSet = $resultSet;
     }
 
     public function check( $object ) {
-        $errors = [];
         foreach ( self::$checks as $check ) {
             $result = $this->$check( $object );
             if ( $result ) {
-                $errors[$result][] = $object;
+				$this->resultSet->add( $result, $object );
             }
         }
-
-        return $errors;
     }
 
     public function finalizeChecks() {
-        $this->existenceCheck->flush();
-        return $this->existenceCheck->results;
+        $this->wikidataCheck->flush();
+		$this->wikipediaCheck->flush();
     }
 
     public function checkWikidataLinkQuick( $object ) {
@@ -55,10 +61,10 @@ class Checker {
 		$res = $this->checkWikidataLinkQuick( $object );
 
 		if ( $res === null ) {
-			$this->existenceCheck->add( $object );
+			$this->wikidataCheck->add( $object );
 		}
 
-        return false;
+        return $res;
     }
 
     public function checkWikipediaLinkQuick( $object ) {
@@ -98,8 +104,9 @@ class Checker {
     private function checkWikipediaLink( $object ) {
 		$res = $this->checkWikipediaLinkQuick( $object );
 
-		if ( $res === null ) {
+		if ( $res !== null ) {
 			// @todo:
+			return $res;
 		}
 
         return false;

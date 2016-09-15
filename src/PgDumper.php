@@ -2,8 +2,6 @@
 
 namespace OsmLint;
 
-use PDO;
-
 class PgDumper {
     const BATCH_SIZE = 1000;
 
