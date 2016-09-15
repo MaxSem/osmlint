@@ -84,28 +84,39 @@ class Checker {
 			return 'Wikipedia field contains multiple values';
 		}
 
-		$parts = explode( ':', $object->wikipedia, 2 );
-		if ( count( $parts ) < 2 ) {
+		list( $prefix, , $dbName ) = $this->parseTitle( $object->wikipedia );
+		if ( !$prefix ) {
 			return "Wikipedia tag contains no wiki prefix";
 		}
-		$wiki = isset( self::$wikiAliases[ $parts[0] ] )
-			? self::$wikiAliases[ $parts[0] ]
-			: $parts[0];
-		$wiki = str_replace( '-', '_', $wiki );
-		$wiki = "{$wiki}wiki";
 		$wikis = $this->environment->getWikiList( 'wikipedia' );
-		if ( !in_array( $wiki, $wikis ) ) {
+		if ( !$dbName || !in_array( $dbName, $wikis ) ) {
 			return 'Wikipedia tag has an invalid wiki prefix';
 		}
 
 		return null;
 	}
 
+	private function parseTitle( $title ) {
+		$parts = explode( ':', $title, 2 );
+		if ( count( $parts ) < 2 ) {
+			return [ null, $title, $null ];
+		}
+		$wiki = isset( self::$wikiAliases[ $parts[0] ] )
+			? self::$wikiAliases[ $parts[0] ]
+			: $parts[0];
+		$dbName = str_replace( '-', '_', $wiki );
+		$dbName = "{$dbName}wiki";
+
+		return [ $wiki, $parts[1], $dbName ];
+	}
+
     private function checkWikipediaLink( $object ) {
 		$res = $this->checkWikipediaLinkQuick( $object );
 
 		if ( $res !== null ) {
-			// @todo:
+			// @fixme: double parse
+			list( , $title, $dbName ) = $this->parseTitle( $object->wikipedia );
+			$this->wikipediaCheck->addTitle( $dbName, $title, $object );
 			return $res;
 		}
 
