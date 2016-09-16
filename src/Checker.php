@@ -99,7 +99,7 @@ class Checker {
 	private function parseTitle( $title ) {
 		$parts = explode( ':', $title, 2 );
 		if ( count( $parts ) < 2 ) {
-			return [ null, $title, $null ];
+			return [ null, $title, null ];
 		}
 		$wiki = isset( self::$wikiAliases[ $parts[0] ] )
 			? self::$wikiAliases[ $parts[0] ]
@@ -114,13 +114,14 @@ class Checker {
 		$res = $this->checkWikipediaLinkQuick( $object );
 
 		if ( $res !== null ) {
-			// @fixme: double parse
-			list( , $title, $dbName ) = $this->parseTitle( $object->wikipedia );
-			$this->wikipediaCheck->addTitle( $dbName, $title, $object );
 			return $res;
 		}
 
-        return false;
+		// @fixme: double parse
+		list( , $title, $dbName ) = $this->parseTitle( $object->wikipedia );
+		$this->wikipediaCheck->addTitle( $dbName, $title, $object );
+
+		return false;
     }
 
     private function checkWpWd( $object ) {
