@@ -80,8 +80,12 @@ class Checker {
 			return 'Wikipedia tag contains a non-Wikipedia link';
 		}
 
+		if ( preg_match( '/&(#x?[0-9A-Fa-f]+|\w+);/', $object->wikipedia ) ) {
+			return 'Wikipedia tag contains HTML entities';
+		}
+
 		if ( preg_match( '/;/', $object->wikipedia ) ) {
-			return 'Wikipedia field contains multiple values';
+			return 'Wikipedia tag contains multiple values';
 		}
 
 		list( $prefix, , $dbName ) = $this->parseTitle( $object->wikipedia );
