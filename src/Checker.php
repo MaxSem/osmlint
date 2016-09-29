@@ -48,7 +48,7 @@ class Checker {
 			return false;
 		}
 		if ( preg_match( '/;/', $object->wikidata ) ) {
-			return 'Wikidata field contains multiple values';
+			return 'Wikidata tag contains multiple values';
 		}
 		if ( !preg_match( '/^Q\d+$/', $object->wikidata ) ) {
 			return 'Invalid Wikidata entity ID';
